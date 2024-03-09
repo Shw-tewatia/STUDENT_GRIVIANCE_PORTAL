@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Show Grivances {% endblock title %}
+
+{% block content %}
+<div class="container mt-5 shadow-lg p-5 mb-5 bg-body rounded">
+{% if complains %}
+    <h1 style="text-align:center;">Complain List</h1>
+    <div class="table-responsive">
+    <table class="table table-bordered" style="text-align:center;">
+            <thead style="background-color: lightgrey;">
+                <tr>
+                    <th>Complain Type</th>
+                    <th>Subject</th>
+                    <th>Description</th>
+                    <th>Complain Generated Time</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Complain Updated Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in complains %}
+                <tr>
+                    <td>{{ i.complain_type|first|upper }}{{ i.complain_type|slice:"1:" }}</td>
+                    <td>{{ i.subject|first|upper }}{{ i.subject|slice:"1:" }}</td>
+                    <td>{{ i.description|first|upper }}{{ i.description|slice:"1:" }}</td>
+                    <td>{{ i.complain_date }}</td>
+                    <td>{{ i.status }}</td>
+                    <td>{{ i.remarks }}</td>
+                    <td>{{ i.updatestatustime }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+<div class="container mt-5 mb-5 bg-body rounded" style="height:80vh;">
+    <div style="text-align:center;padding: 35vh;"><h1>You Have No Complains</h1></div>
+</div>
+{% endif %}
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+{% load static %}
+{%load crispy_forms_tags %}
+
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Home Page {% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/boot.css' %}">
+    <style>
+            .bg-image {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background-image: url('{% static 'images/krmu.jpg' %}');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+        }
+
+        .bg-image::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: inherit;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            opacity: 0.5;
+            z-index: -1;
+        }
+        .login{
+            margin-top:17%;
+        }
+        @media screen and (max-width: 600px) {
+            .login {
+                margin-top: 0px;
+            }
+        }
+        .bg-image .container {
+            position: relative;
+            z-index: 1;
+        }
+            .footer-below{
+            text-align:center;
+            font-size: 30px;
+            }
+        @media screen and (max-width: 600px) {
+        .footer-below{
+            text-align:center;
+            font-size: 18px;
+            }
+        }
+        .dropdown-item:hover {
+            background-color: #007bff;
+            color: white;
+          }
+    </style>
+</head>
+<body style="background-color: beige;">
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+    <a class="navbar-brand me-5 ms-3" href="{% url 'LoginHome' %}">K.R. MANGALAM UNIVERSITY</a>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+        <ul class="navbar-nav mt-2 mt-lg-0 bd-navbar-nav flex-row right" style="position: absolute; right: 6%;">
+    <li class="nav-item">
+        <div style="display: flex; flex-direction: row;">
+            <div class="text-center text-lg-start me-3">
+                <div style="color:white; font-size: 25px">{{request.user}}</div>
+            </div>
+            <div class="dropdown">
+                <img src="{% static 'images/profile.png' %}" alt="Image" id="dropdownMenuButton"
+                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 4vh; cursor: pointer;">
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="{% url 'Profile' user.id%}">Profile</a>
+                    <a class="dropdown-item" href="{% url 'Logout' %}" onclick="logoutAndClearChats()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
+
+        {% if perms.app.can_view_superuser %}
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0 bd-navbar-nav flex-row">
+              <li class="nav-item">
+                  <a class="nav-link active" href="{% url 'Analytics' %}"><button type="button"
+                                                    class="btn btn-outline-primary border-white text-white">
+                      Analytics</button></a>
+              </li>
+        </ul>
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0 bd-navbar-nav flex-row">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'ShowUsers' %}"><button type="button"
+                                                    class="btn btn-outline-primary border-white text-white">Show
+                        All Users</button></a>
+                </li>
+        </ul>
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0 bd-navbar-nav flex-row">
+            <li class="nav-item dropdown m-2">
+            <a class="btn btn-outline-primary border-white text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Teacher
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'CreateGrievanceUser' %}">Create Teacher</a>
+                <a class="dropdown-item" href="{% url 'ShowTeachers' %}">Show Teachers</a>
+            </div>
+            </li>
+        </ul>
+        {% endif %}
+        {% if perms.app.can_view_superuser or perms.app.can_view_staff %}
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0 bd-navbar-nav flex-row">
+            <li class="nav-item dropdown">
+            <a class="btn btn-outline-primary border-white text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Student
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'CreateStudent' %}">Create Student</a>
+                <a class="dropdown-item" href="{% url 'ShowStudents' %}">Show Students</a>
+            </div>
+            </li>
+        </ul>
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0 bd-navbar-nav flex-row">
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'ShowAllGrivances' %}"><button type="button"
+                                                    class="btn btn-outline-primary border-white text-white">Show
+                    Grievances</button></a>
+            </li>
+        </ul>
+        {% endif %}
+        {% if not perms.app.can_view_superuser and not perms.app.can_view_staff %}
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0 bd-navbar-nav flex-row">
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'CreateGrievance' %}"><button type="button"
+                                                    class="btn btn-outline-primary border-white text-white">Create
+                    Grievances</button></a>
+            </li>
+        </ul>
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0 bd-navbar-nav flex-row">
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'StudentShowGrievance' %}"><button type="button"
+                                                    class="btn btn-outline-primary border-white text-white">Check
+                    Grievances Status</button></a>
+            </li>
+        </ul>
+        {% endif %}
+  </div>
+    {% endif %}
+</nav>
+
+
+{% block content %}
+
+
+    {% if not user.is_authenticated %}
+
+<div class="bg-image">
+       <a href="{% url 'Home' %}"><img src="{% static 'images/logo.png' %}" class="img-fluid"></a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 custom-col login" style="background-color: rgba(255, 255, 255, 0.4);">
+                <div class="marquee-container">
+                    <marquee direction="up" scrollamount="3" class="custom-col" id="myMarquee">
+                <div class="m-3">
+
+                    <b>KR Mangalam University</b>
+                    <ul style="margin-top: 10px;">
+                        <li>The university offers lots of courses like engineering, management, law, and more.</li>
+                        <li>Professors here are really smart and care about teaching well.</li>
+                        <li>We have great classrooms, labs, and a big library.</li>
+                        <li>If you have a cool idea, we'll help you turn it into something real.</li>
+                        <li>We work with companies to make sure you can get a good job when you're done.</li>
+                        <li>You can do internships and visit companies too.</li>
+                        <li>It's not all study - we have fun activities, events, and games.</li>
+                    </ul>
+                    <b>About The Portal</b>
+                    <ul style="margin-top: 10px;">
+                        <li><b>Easy Access:</b><br> Accessible 24/7 from anywhere.</li>
+                        <li><b>Anonymous Reporting:</b><br> Report grievances without revealing your identity.</li>
+                        <li><b>Various Categories:</b><br> Categorize your concerns for efficient handling.</li>
+                        <li><b>Real-time Tracking:</b><br> Stay updated on the status of your complaints.</li>
+                        <li><b>Prompt Response:</b><br> Expect timely and effective responses.</li>
+                        <li><b>Confidentiality:</b><br> Your privacy and information are safeguarded.</li>
+                        <li><b>Quick Resolutions:</b><br> Swiftly address issues to enhance your academic journey.</li>
+                        <li><b>Submit a Grievance:</b><br> Fill out a simple form with your concern's details.</li>
+                        <li><b>Track Progress:</b><br> Monitor the status of your complaint in real-time.</li>
+                        <li><b>Receive Response:</b><br> Get a response and resolution from our dedicated team.</li>
+                    </ul>
+
+                </div>
+                    </marquee>
+                </div>
+            </div>
+            <div class="col-md-6 custom-col login" style="background-color: rgba(255, 255, 255, 0.4);">
+                    <form action="{% url 'Home' %}" method="POST" class="shadow-lg p-4 ms-5 me-5 rounded">
+                        {% csrf_token %}
+                        <div style="text-align:center">
+                            <h1 class="font-weight-bold">Login Your Account</h1>
+                        </div>
+                        {{form|crispy}}
+                        <div class="text-center">
+                            <input class="btn btn-primary" type="submit" value="Login"><br>
+                            <a href="{% url 'OtpLogin' %}" class="text-primary"><b>Login Via OTP</b></a><br>
+                            <a href="{% url 'password-reset' %}" class="text-danger"><b>Forgot Password</b></a>
+                        </div>
+                    </form>
+                {% for message in messages %}
+                            <div class="alert alert-danger ms-5 me-5">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+            </div>
+
+        </div>
+    </div>
+    <footer class="position-fixed bottom-0 start-0 end-0 z-index-1">
+  <div class="container">
+    <p class="footer-below">K.R. MANGALAM UNIVERSITY CONTACT NO. +91 99999 99999</p>
+  </div>
+</footer>
+</div>
+    {% endif %}
+
+    <script>
+        const marquee = document.getElementById('myMarquee');
+            function pauseMarquee() {
+                marquee.stop();
+            }
+            function resumeMarquee() {
+                marquee.start();
+                }
+            marquee.addEventListener('mouseenter', pauseMarquee);
+            marquee.addEventListener('mouseleave', resumeMarquee);
+    </script>
+{% endblock content %}
+    {% if user.is_authenticated %}
+    <script type="text/javascript">
+            (function(d, m){
+                var kommunicateSettings =
+                    {"appId":"3d3b24955b1b30ef380624ac73cef63","popupWidget":true,"automaticChatOpenOnNavigation":true};
+                var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
+                s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+                var h = document.getElementsByTagName("head")[0]; h.appendChild(s);
+                window.kommunicate = m; m._globals = kommunicateSettings;
+            })(document, window.kommunicate || {});
+        /* NOTE : Use web server to view HTML files as real-time update will not work if you directly open the HTML file in the browser. */
+        </script>
+            <!-- Footer -->
+        <footer class="bg-dark text-center text-white fixed-bottom">
+          <!-- Grid container -->
+          <div class="container p-4">
+              <p>
+                K.R. MANGALAM UNIVERSITY CONTACT NO. +91 99999 99999.
+              </p>
+          </div>
+        </footer>
+        <!-- Footer -->
+    {% endif %}
+
+ <!-- Bootstrap JS and jQuery (optional) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+</body>
+</html>
